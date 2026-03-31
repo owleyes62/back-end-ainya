@@ -14,10 +14,10 @@
   "license": "ISC",
   "author": "DonkeyCode",
   "type": "module",
-  "main": "server.ts",
+  "main": "index.ts",
   "scripts": {
-    "start": "tsx src/server.ts",
-    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc"
   },
   "dependencies": {
