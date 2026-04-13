@@ -24,12 +24,13 @@ async function novaEntidade() {
     const baseName = nomeLimpo.toLowerCase();
 
     const paths = {
-        model: path.join(__dirname, '../src/routes', `${baseName}.routes.ts`),
+        routes: path.join(__dirname, '../src/routes', `${baseName}.routes.ts`),
         controller: path.join(__dirname, '../src/controllers', `${baseName}.controller.ts`),
-        service: path.join(__dirname, '../src/services', `${baseName}.service.ts`)
+        service: path.join(__dirname, '../src/services', `${baseName}.service.ts`),
+        models: path.join(__dirname, '../src/models', `${baseName}.model.prisma`),
     };
 
-    fs.writeFileSync(paths.model, `
+    fs.writeFileSync(paths.routes, `
 import { Router } from "express";
 import { ${nomeLimpo}Controller } from "../controllers/${baseName}.controller";
             
@@ -78,6 +79,14 @@ export class ${nomeLimpo}Service {
         //});
     }
 }
+    `);
+    fs.writeFileSync(paths.models, `
+model ${nomeLimpo} {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
     `);
 
     console.log(`Entidade ${nomeLimpo} criada com sucesso!`);

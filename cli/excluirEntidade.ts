@@ -35,12 +35,13 @@ async function excluirEntidade() {
 
     const baseName = nomeLimpo.toLowerCase();
 
-    
+
 
     const paths = {
         routes: path.join(__dirname, '../src/routes', `${baseName}.routes.ts`),
         controller: path.join(__dirname, '../src/controllers', `${baseName}.controller.ts`),
-        service: path.join(__dirname, '../src/services', `${baseName}.service.ts`)
+        service: path.join(__dirname, '../src/services', `${baseName}.service.ts`),
+        models: path.join(__dirname, '../src/models', `${baseName}.model.prisma`),
     };
 
     const entidade = await inquirer.prompt([
@@ -51,6 +52,7 @@ async function excluirEntidade() {
         }
     ]);
     if (entidade.res == "y") {
+        deleteFile(paths.models);
         deleteFile(paths.routes);
         deleteFile(paths.controller);
         deleteFile(paths.service);
