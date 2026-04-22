@@ -24,10 +24,10 @@ async function novaEntidade() {
     const baseName = nomeLimpo.toLowerCase();
 
     const paths = {
-        routes: path.join(__dirname, '../src/routes', `${baseName}.routes.ts`),
-        controller: path.join(__dirname, '../src/controllers', `${baseName}.controller.ts`),
-        service: path.join(__dirname, '../src/services', `${baseName}.service.ts`),
-        models: path.join(__dirname, '../src/models', `${baseName}.model.prisma`),
+        routes: path.join(__dirname, '../api/routes', `${baseName}.routes.ts`),
+        controller: path.join(__dirname, '../api/controllers', `${baseName}.controller.ts`),
+        service: path.join(__dirname, '../api/services', `${baseName}.service.ts`),
+        models: path.join(__dirname, '../api/models', `${baseName}.model.prisma`),
     };
 
     fs.writeFileSync(paths.routes, `
