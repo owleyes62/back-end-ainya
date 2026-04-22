@@ -1,6 +1,8 @@
-
 import { prisma } from "../../lib/prisma";
 import { HttpError } from "../core/httpError";
+import argon2 from "argon2";
+
+const isDev = process.env.NODE_ENV === "development";
 
 export class UserService {
     static async create(body: any) {
@@ -14,7 +16,7 @@ export class UserService {
             data: {
                 name,
                 email,
-                password,
+                password: await argon2.hash(password),
             },
             include: {
                 institution: true,
@@ -39,11 +41,21 @@ export class UserService {
         });
 
         if (!user) {
-            throw new HttpError("User not found", 404);
+            if (isDev) {
+                throw new HttpError("User not found", 404);
+            } else {
+                throw new HttpError("Invalid credentials", 401);
+            }
         }
 
-        if (user.password !== password) {
-            throw new HttpError("Invalid password", 401);
+        const ok = await argon2.verify(user.password, password)
+
+        if (!ok) {
+            if(isDev) {
+                throw new HttpError("Invalid password", 401);
+            } else {
+                throw new HttpError("Invalid credentials", 401);
+            }
         }
 
         return user;

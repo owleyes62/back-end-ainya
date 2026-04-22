@@ -15,6 +15,7 @@
         "@prisma/adapter-pg": "^7.7.0",
         "@prisma/client": "^7.7.0",
         "@types/express": "^4.17.21",
+        "argon2": "^0.44.0",
         "body-parser": "^1.20.2",
         "cors": "^2.8.6",
         "express": "^4.19.2",
