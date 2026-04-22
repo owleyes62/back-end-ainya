@@ -29,8 +29,8 @@
         "start": "tsx src/index.ts",
         "dev": "tsx watch src/index.ts",
         "build": "tsc",
-        "nova-entidade": "tsx cli/novaEntidade.ts",
-        "excluir-entidade": "tsx cli/excluirEntidade.ts",
+        "entidade:new": "tsx cli/novaEntidade.ts",
+        "entidade:del": "tsx cli/excluirEntidade.ts",
         "prisma:build": "tsx cli/compactarModelos.ts"
     },
     "devDependencies": {
