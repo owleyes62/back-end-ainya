@@ -13,5 +13,15 @@ export class UserController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async login(req: Request, res: Response) {
+        try {
+            const token = await UserService.login(req.body);
+            return res.status(200).json({ token });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
     
