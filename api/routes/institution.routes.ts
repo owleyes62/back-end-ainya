@@ -4,7 +4,10 @@ import { InstitutionController } from "../controllers/institution.controller.js"
             
 const institutionRouter = Router();
             
-//institutionRouter.post("/", InstitutionController.createUser);
+//cadastro
+institutionRouter.post("/", InstitutionController.create);
+//listar
+institutionRouter.get("/", InstitutionController.getAll);
             
 export default institutionRouter;
     

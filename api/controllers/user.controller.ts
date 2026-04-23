@@ -23,5 +23,15 @@ export class UserController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async getAll(req: Request, res: Response) {
+        try {
+            const users = await UserService.getAll();
+            return res.status(200).json(users);
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
     

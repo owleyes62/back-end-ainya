@@ -4,20 +4,26 @@ import { HttpError } from "../core/httpError.js";
 
 export class InstitutionService {
     static async create(body: any) {
-        //const { name, email, password } = body;
+        const { name } = body;
 
-        //if (!name || !email || !password) {
-        //    throw new HttpError("Name, email, and password are required", 400);
-        //}
+        if (!name) {
+            throw new HttpError("Name is required", 400);
+        }
 
-        //const institution = await prisma.institution.create({
-        //    data: {
-        //        
-        //    },
-        //    include: {
-        //        
-        //    },
-        //});
+        const institution = await prisma.institution.create({
+            data: {
+                name,
+            },
+        });
+        return await prisma.institution.findUnique({
+            where: {
+                id: institution.id,
+            },
+        });
+    }
+
+    static async getAll() {
+        return await prisma.institution.findMany();
     }
 }
     

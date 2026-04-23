@@ -26,7 +26,7 @@ datasource db {
         combinedModels += content;
     }
 
-    const schemaPath = path.join(__dirname, '../api/prisma/schema.prisma');
+    const schemaPath = path.join(__dirname, '../prisma/schema.prisma');
     fs.writeFileSync(schemaPath, combinedModels);
 }
 
