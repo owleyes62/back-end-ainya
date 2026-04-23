@@ -13,5 +13,15 @@ export class InstitutionController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async getAll(req: Request, res: Response) {
+        try {
+            const institutions = await InstitutionService.getAll();
+            return res.status(200).json(institutions);
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
     

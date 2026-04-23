@@ -32,15 +32,22 @@
         "build": "tsc",
         "entidade:new": "tsx cli/novaEntidade.ts",
         "entidade:del": "tsx cli/excluirEntidade.ts",
-        "prisma:build": "tsx cli/compactarModelos.ts"
+        "prisma:build:migrate": "tsx cli/compactarModelos.ts && prisma migrate dev && prisma generate",
+        "prisma:build": "tsx cli/compactarModelos.ts && prisma generate",
+        "test": "jest"
     },
     "devDependencies": {
         "@types/cors": "^2.8.19",
+        "@types/jest": "^30.0.0",
         "@types/node": "^25.6.0",
         "@types/pg": "^8.18.0",
+        "@types/supertest": "^7.2.0",
         "@vercel/node": "^4.0.0",
         "dotenv": "^17.4.2",
+        "jest": "^30.3.0",
         "prisma": "^7.7.0",
+        "supertest": "^7.2.2",
+        "ts-jest": "^29.4.9",
         "ts-node": "^10.9.2"
     }
 }
