@@ -7,6 +7,7 @@ model User {
     role           String   @default("aluno") //enum "aluno", "professor", "admin"
     institution_id String?
     institution Institution? @relation(fields: [institution_id], references: [id])
+    refreshTokens RefreshToken[]
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 }
