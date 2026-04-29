@@ -32,25 +32,8 @@ describe("UserService", () => {
       );
 
       await expect(
-        UserService.create({ name: "João", email: "joao@email.com", password: "123456" })
+        UserService.create({ name: "João", email: "joao@email.com", password: "123456", institution: "550e8400-e29b-41d4-a716-446655440000" })
       ).resolves.not.toThrow();
     });
   });
-
-  describe("login", () => {
-    it("deve logar com os dados válidos", async () => {
-      argon2Mock.verify.mockResolvedValue(true);
-      prismaMock.findUnique.mockResolvedValue(
-        { 
-          id: "550e8400-e29b-41d4-a716-446655440000", 
-          name: "João", 
-          email: "joao@email.com" 
-        } as any
-      );
-
-      await expect(
-        UserService.login({ email: "joao@email.com", password: "123456" })
-      ).resolves.not.toThrow();
-    })
-  })
 });

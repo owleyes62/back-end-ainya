@@ -15,7 +15,18 @@ model Institution {
     updatedAt DateTime @updatedAt
 }
 
-    
+    model RefreshToken {
+  id          String   @id @default(uuid())
+  token       String   @unique
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  expiresAt   DateTime
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
 model User {
     id             String   @id @default(uuid())
     name           String
@@ -24,6 +35,7 @@ model User {
     role           String   @default("aluno") //enum "aluno", "professor", "admin"
     institution_id String?
     institution Institution? @relation(fields: [institution_id], references: [id])
+    refreshTokens RefreshToken[]
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 }

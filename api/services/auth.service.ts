@@ -1,5 +1,5 @@
-import { prisma } from "../../lib/prisma";
-import { HttpError } from "../core/httpError";
+import { prisma } from "../../lib/prisma.js";
+import { HttpError } from "../core/httpError.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -34,19 +34,21 @@ export class AuthService {
         const ok = await argon2.verify(user.password, password)
 
         if (!ok) {
-            if(isDev) {
+            if (isDev) {
                 throw new HttpError("Invalid password", 401);
             } else {
                 throw new HttpError("Invalid credentials", 401);
             }
         }
 
-        return user;
+        const tokens = await AuthService.generateTokens(user.id);
+
+        return tokens;
     }
 
     private static async generateTokens(userId: string) {
         const accessToken = jwt.sign({ sub: userId }, process.env.JWT_SECRET!, { expiresIn: "15m" });
-        
+
         // Geramos um token aleatório e opaco para o Refresh
         const refreshTokenValue = crypto.randomBytes(40).toString("hex");
         const expiresAt = new Date();
@@ -89,4 +91,3 @@ export class AuthService {
 
 
 }
-    
