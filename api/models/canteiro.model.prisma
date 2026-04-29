@@ -1,0 +1,11 @@
+
+model Canteiro {
+    id        String           @id @default(uuid())
+    user_id   User             @relation(fields: [user_id], references: [id])
+    plant_id  PlantaForrageira @relation(fields: [plant_id], references: [id])
+    name:     String
+    createdAt DateTime         @default(now())
+    updatedAt DateTime         @updatedAt
+}
+
+    
