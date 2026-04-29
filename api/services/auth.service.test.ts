@@ -1,6 +1,8 @@
+process.env.JWT_SECRET = "test-secret";
 import { UserService } from "./user.service";
 import { prisma } from "../../lib/prisma";
 import argon2 from "argon2";
+import { AuthService } from "./auth.service";
 
 jest.mock("../../lib/prisma", () => ({
   prisma: {
@@ -8,6 +10,12 @@ jest.mock("../../lib/prisma", () => ({
       create: jest.fn(),
       findUnique: jest.fn(),
       findMany: jest.fn(),
+    },
+    refreshToken: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      delete: jest.fn(),
+      deleteMany: jest.fn(),
     },
   },
 }));
@@ -30,9 +38,10 @@ describe("UserService", () => {
           email: "joao@email.com" 
         } as any
       );
+      (prisma.refreshToken.create as jest.Mock).mockResolvedValue({});
 
       await expect(
-        UserService.login({ email: "joao@email.com", password: "123456" })
+        AuthService.login({ email: "joao@email.com", password: "123456" })
       ).resolves.not.toThrow();
     })
   })

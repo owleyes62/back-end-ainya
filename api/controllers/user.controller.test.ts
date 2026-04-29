@@ -1,6 +1,6 @@
-import { UserController } from "./user.controller";
-import { UserService } from "../services/user.service";
-import { HttpError } from "../core/httpError";
+import { UserController } from "./user.controller.js";
+import { UserService } from "../services/user.service.js";
+import { HttpError } from "../core/httpError.js";
 import { Request, Response } from "express";
 
 jest.mock("../services/user.service");
@@ -26,50 +26,28 @@ describe("UserController", () => {
             expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalledWith({ message: "created successfully" });
         });
-    });
 
-    it("deve retornar o status do HttpError em caso de falha", async () => {
-        serviceMock.create.mockRejectedValue(new HttpError("Email já existe", 409));
+        it("deve retornar o status do HttpError em caso de falha", async () => {
+            serviceMock.create.mockRejectedValue(new HttpError("Email já existe", 409));
 
-        const req = { body: {} } as Request;
-        const res = mockRes();
-
-        await UserController.create(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(409);
-        expect(res.json).toHaveBeenCalledWith({ error: "Email já existe" });
-    });
-
-    it("deve retornar 500 para erros inesperados", async () => {
-        serviceMock.create.mockRejectedValue(new Error("Erro de banco"));
-
-        const req = { body: {} } as Request;
-        const res = mockRes();
-
-        await UserController.create(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(500);
-    });
-
-    describe("login", () => {
-        it("deve retornar 200 ao logar com sucesso", async () => {
-            serviceMock.login.mockResolvedValue({
-                id: "550e8400-e29b-41d4-a716-446655440000",
-                name: "João",
-                email: "joao@email.com",
-                password: "123456",
-                role: "aluno",
-                institution_id: null,
-                institution: null,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            });
-            const req = { body: { email: "joao@email.com", password: "123456" } } as Request;
+            const req = { body: {} } as Request;
             const res = mockRes();
 
-            await UserController.login(req, res);
+            await UserController.create(req, res);
 
-            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.status).toHaveBeenCalledWith(409);
+            expect(res.json).toHaveBeenCalledWith({ error: "Email já existe" });
+        });
+
+        it("deve retornar 500 para erros inesperados", async () => {
+            serviceMock.create.mockRejectedValue(new Error("Erro de banco"));
+
+            const req = { body: {} } as Request;
+            const res = mockRes();
+
+            await UserController.create(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
         });
     });
 });
