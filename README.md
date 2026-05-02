@@ -17,3 +17,13 @@
 - `Exclusão` models/entidade.model.prisma
 - `Exclusão` controllers/entidade.controller.ts
 - `Exclusão` services/entidade.service.ts
+
+## Testes Unitários
+```
+npm test
+```
+arquivos de teste: `entidade.camada.test`
+
+## Compilar banco de dados
+localmente:`npm run prisma:build`
+atualizando o banco: `npm run prisma:build:migrate`
