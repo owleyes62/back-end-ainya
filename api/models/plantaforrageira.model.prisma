@@ -1,8 +1,8 @@
 
 model PlantaForrageira {
     id             String   @id @default(uuid())
-    name:          String
-    category:      String //Enum GRAMINEA, LEGUMINOSA, CACTACEA, OUTRO
+    name          String
+    category      String //Enum GRAMINEA, LEGUMINOSA, CACTACEA, OUTRO
     description    String
     semester_focus String //Enum PRIMEIRO, SEGUNDO, AMBOS
     createdAt      DateTime @default(now())

@@ -5,7 +5,7 @@ model Canteiro {
     user      User             @relation(fields: [user_id], references: [id])
     plant_id  String
     plant     PlantaForrageira @relation(fields: [plant_id], references: [id])
-    name:     String
+    name     String
     createdAt DateTime         @default(now())
     updatedAt DateTime         @updatedAt
 }
