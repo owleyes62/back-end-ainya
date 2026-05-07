@@ -9,7 +9,7 @@ model Formulario {
     started_at:  DateTime
     ended_at:    DateTime
     observations String
-    synced:      Boolean @default(false)
+    synced      Boolean @default(false)
     createdAt    DateTime           @default(now())
     updatedAt    DateTime           @updatedAt
 }
