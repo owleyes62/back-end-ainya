@@ -1,0 +1,14 @@
+
+model ListaDeFormularios {
+    id          String   @id @default(uuid())
+    canteiro_id String 
+    canteiro    Canteiro @relation(fields: [canteiro_id], references: [id])
+    plant_id    String
+    plant       PlantaForrageira @relation(fields: [plant_id], references: [id])
+    created_by  String
+    user        User             @relation(fields: [created_by], references: [id])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+    

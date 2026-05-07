@@ -1,0 +1,10 @@
+
+model Institution {
+    id        String   @id @default(uuid())
+    name      String
+    users     User[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+    
