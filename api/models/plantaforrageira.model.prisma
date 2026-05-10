@@ -7,6 +7,10 @@ model PlantaForrageira {
     semester_focus String //Enum PRIMEIRO, SEGUNDO, AMBOS
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
+
+    canteiros          Canteiro[]
+    listaDeFormularios ListaDeFormularios[]
+    plantTemplates     PlantTemplate[]
 }
 
     

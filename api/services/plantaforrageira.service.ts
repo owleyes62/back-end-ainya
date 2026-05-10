@@ -1,23 +1,29 @@
-
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
 
+const CATEGORIAS_VALIDAS = ["GRAMINEA", "LEGUMINOSA", "CACTACEA", "OUTRO"];
+
 export class PlantaForrageiraService {
-    static async create(body: any) {
-        //const { name, email, password } = body;
+    static async findAll(category?: string) {
+        if (category && !CATEGORIAS_VALIDAS.includes(category)) {
+            throw new HttpError(
+                `Categoria inválida. Use: ${CATEGORIAS_VALIDAS.join(", ")}`,
+                400
+            );
+        }
 
-        //if (!name || !email || !password) {
-        //    throw new HttpError("Name, email, and password are required", 400);
-        //}
+        const where = category ? { category } : {};
 
-        //const plantaforrageira = await prisma.plantaforrageira.create({
-        //    data: {
-        //        
-        //    },
-        //    include: {
-        //        
-        //    },
-        //});
+        return prisma.plantaForrageira.findMany({
+            where,
+            orderBy: { name: "asc" },
+            select: {
+                id: true,
+                name: true,
+                category: true,
+                description: true,
+                semester_focus: true,
+            },
+        });
     }
 }
-    

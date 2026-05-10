@@ -6,7 +6,7 @@ model Relatorio {
     canteiro_id String 
     canteiro    Canteiro @relation(fields: [canteiro_id], references: [id])
     list_id      String
-    list         ListaDeForumlarios @relation(fields: [list_id], references: [id])
+    list         ListaDeFormularios @relation(fields: [list_id], references: [id])
     status String //Enum RASCUNHO, SUBMETIDO, CORRIGIDO
     introduction String
     objective String

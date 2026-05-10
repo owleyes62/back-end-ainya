@@ -1,23 +1,35 @@
-
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
 
 export class CanteiroService {
-    static async create(body: any) {
-        //const { name, email, password } = body;
+    static async findByUser(userId: string) {
+        if (!userId) throw new HttpError("userId é obrigatório", 400);
 
-        //if (!name || !email || !password) {
-        //    throw new HttpError("Name, email, and password are required", 400);
-        //}
+        return prisma.canteiro.findMany({
+            where: { user_id: userId },
+            include: {
+                plant: {
+                    select: { id: true, name: true, category: true },
+                },
+                listaDeFormularios: {
+                    include: {
+                        plant: {
+                            select: { id: true, name: true },
+                        },
+                        _count: {
+                            select: { formularios: true },
+                        },
+                    },
+                },
+            },
+        });
+    }
 
-        //const canteiro = await prisma.canteiro.create({
-        //    data: {
-        //        
-        //    },
-        //    include: {
-        //        
-        //    },
-        //});
+    static async create(body: { user_id: string; plant_id: string; name: string }) {
+        const { user_id, plant_id, name } = body;
+        if (!user_id || !plant_id || !name) {
+            throw new HttpError("user_id, plant_id e name são obrigatórios", 400);
+        }
+        return prisma.canteiro.create({ data: { user_id, plant_id, name } });
     }
 }
-    
