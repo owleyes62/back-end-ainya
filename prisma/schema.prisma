@@ -56,7 +56,7 @@ model Checklist {
 model Formulario {
     id           String             @id @default(uuid())
     list_id      String
-    list         ListaDeForumlarios @relation(fields: [list_id], references: [id])
+    list         ListaDeFormularios @relation(fields: [list_id], references: [id])
     user_id      String
     user         User               @relation(fields: [user_id], references: [id])
     type        String             //Enum SEMANAL DIARIO
