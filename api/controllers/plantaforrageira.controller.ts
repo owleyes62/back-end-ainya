@@ -1,17 +1,17 @@
-
 import { Request, Response } from "express";
 import { HttpError } from "../core/httpError.js";
 import { PlantaForrageiraService } from "../services/plantaforrageira.service.js";
-        
+
 export class PlantaForrageiraController {
-    static async create(req: Request, res: Response) {
+    static async findAll(req: Request, res: Response) {
         try {
-            await PlantaForrageiraService.create(req.body);
-            return res.status(201).json({ message: "created successfully" });
+            const { category } = req.query;
+            const plantas = await PlantaForrageiraService.findAll(
+                category as string | undefined
+            );
+            return res.status(200).json(plantas);
         } catch (err: HttpError | any) {
-            console.error("Error:", err);
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
 }
-    

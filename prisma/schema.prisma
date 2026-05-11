@@ -15,6 +15,8 @@ model AcademicPeriod {
     end_date DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    turmas    Turma[]
 }
 
     
@@ -38,6 +40,9 @@ model Canteiro {
     name     String
     createdAt DateTime         @default(now())
     updatedAt DateTime         @updatedAt
+
+    listaDeFormularios ListaDeFormularios[]
+    relatorios         Relatorio[]
 }
 
     
@@ -56,9 +61,7 @@ model Checklist {
 model Formulario {
     id           String             @id @default(uuid())
     list_id      String
-=======
     list         ListaDeFormularios @relation(fields: [list_id], references: [id])
->>>>>>> iwerson-dev
     user_id      String
     user         User               @relation(fields: [user_id], references: [id])
     type        String             //Enum SEMANAL DIARIO
@@ -68,6 +71,10 @@ model Formulario {
     synced      Boolean @default(false)
     createdAt    DateTime           @default(now())
     updatedAt    DateTime           @updatedAt
+
+    checklists   Checklist[]
+    measurements Measurement[]
+    photos       Photo[]
 }
 
     
@@ -75,6 +82,7 @@ model Institution {
     id        String   @id @default(uuid())
     name      String
     users     User[]
+    turmas    Turma[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -88,8 +96,12 @@ model ListaDeFormularios {
     plant       PlantaForrageira @relation(fields: [plant_id], references: [id])
     created_by  String
     user        User             @relation(fields: [created_by], references: [id])
+    name        String?
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+
+    formularios Formulario[]
+    relatorios  Relatorio[]
 }
 
     
@@ -123,6 +135,10 @@ model PlantaForrageira {
     semester_focus String //Enum PRIMEIRO, SEGUNDO, AMBOS
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
+
+    canteiros          Canteiro[]
+    listaDeFormularios ListaDeFormularios[]
+    plantTemplates     PlantTemplate[]
 }
 
     
@@ -134,6 +150,9 @@ model PlantTemplate {
     unit              String
     createdA          DateTime         @default(now())
     updatedA          DateTime         @updatedAt
+
+    checklists   Checklist[]
+    measurements Measurement[]
 }
 
     model RefreshToken {
@@ -155,7 +174,7 @@ model Relatorio {
     canteiro_id String 
     canteiro    Canteiro @relation(fields: [canteiro_id], references: [id])
     list_id      String
-    list         ListaDeForumlarios @relation(fields: [list_id], references: [id])
+    list         ListaDeFormularios @relation(fields: [list_id], references: [id])
     status String //Enum RASCUNHO, SUBMETIDO, CORRIGIDO
     introduction String
     objective String
@@ -179,8 +198,10 @@ model Turma {
     name String
     created_by String
     user      User             @relation(fields: [created_by], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    alunoTurmas AlunoTurma[]
 }
 
     
@@ -192,8 +213,15 @@ model User {
     role           String   @default("aluno") //enum "aluno", "professor", "admin"
     institution_id String?
     institution Institution? @relation(fields: [institution_id], references: [id])
-    refreshTokens RefreshToken[]
-    createdAt      DateTime @default(now())
-    updatedAt      DateTime @updatedAt
+    refreshTokens      RefreshToken[]
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+
+    alunoTurmas        AlunoTurma[]
+    canteiros          Canteiro[]
+    formularios        Formulario[]
+    listasFormularios  ListaDeFormularios[]
+    relatorios         Relatorio[]
+    turmasCriadas      Turma[]
 }
 

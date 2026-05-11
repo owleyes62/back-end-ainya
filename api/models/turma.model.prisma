@@ -8,8 +8,10 @@ model Turma {
     name String
     created_by String
     user      User             @relation(fields: [created_by], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    alunoTurmas AlunoTurma[]
 }
 
     
