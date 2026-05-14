@@ -1,23 +1,21 @@
-
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
 
 export class PhotoService {
-    static async create(body: any) {
-        //const { name, email, password } = body;
+    static async create(body: { form_id: string; url: string }) {
+        const { form_id, url } = body;
 
-        //if (!name || !email || !password) {
-        //    throw new HttpError("Name, email, and password are required", 400);
-        //}
+        if (!form_id || !url) {
+            throw new HttpError("form_id e url são obrigatórios", 400);
+        }
 
-        //const photo = await prisma.photo.create({
-        //    data: {
-        //        
-        //    },
-        //    include: {
-        //        
-        //    },
-        //});
+        const photo = await prisma.photo.create({
+            data: {
+                form_id,
+                url,
+            },
+        });
+
+        return photo;
     }
 }
-    
