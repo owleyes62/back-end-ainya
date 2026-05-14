@@ -4,7 +4,8 @@ import { PhotoController } from "../controllers/photo.controller.js";
             
 const photoRouter = Router();
             
-//photoRouter.post("/", PhotoController.createUser);
-            
+photoRouter.post("/", PhotoController.create);
+photoRouter.delete("/:id", PhotoController.delete);
+     
 export default photoRouter;
     

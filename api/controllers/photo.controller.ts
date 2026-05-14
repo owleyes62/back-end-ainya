@@ -53,4 +53,26 @@ export class PhotoController {
             });
         }
     }
+
+    static async delete(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const photo = await PhotoService.delete(id);
+
+            return res.status(200).json({
+                data: photo,
+                error: null,
+                message: "Foto removida com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao remover foto",
+            });
+        }
+    }
 }

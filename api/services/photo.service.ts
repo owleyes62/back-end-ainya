@@ -1,5 +1,7 @@
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
+import fs from "node:fs";
+import path from "node:path";
 
 export class PhotoService {
     static async create(body: { form_id: string; url: string }) {
@@ -15,6 +17,39 @@ export class PhotoService {
                 url,
             },
         });
+
+        return photo;
+    }
+
+    static async delete(id: string) {
+        if (!id) {
+            throw new HttpError("id é obrigatório", 400);
+        }
+
+        const photo = await prisma.photo.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!photo) {
+            throw new HttpError("Foto não encontrada", 404);
+        }
+
+        await prisma.photo.delete({
+            where: {
+                id,
+            },
+        });
+
+        if (photo.url.startsWith("/uploads/")) {
+            const filename = photo.url.replace("/uploads/", "");
+            const filePath = path.resolve("src/public/uploads", filename);
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
 
         return photo;
     }
