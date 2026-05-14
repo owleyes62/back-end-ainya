@@ -46,4 +46,48 @@ export class FormularioController {
             });
         }
     }
+
+    static async finalizar(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const formulario = await FormularioService.finalizar(id);
+
+            return res.status(200).json({
+                data: formulario,
+                error: null,
+                message: "Formulário finalizado com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao finalizar formulário",
+            });
+        }
+    }
+
+    static async sync(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const formulario = await FormularioService.sync(id, req.body);
+
+            return res.status(200).json({
+                data: formulario,
+                error: null,
+                message: "Formulário sincronizado com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao sincronizar formulário",
+            });
+        }
+    }
 }
