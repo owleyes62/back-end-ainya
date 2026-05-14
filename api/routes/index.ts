@@ -8,6 +8,7 @@ import checklistRouter from "./checklist.routes.js";
 import measurementRouter from "./measurement.routes.js";
 import photoRouter from "./photo.routes.js";
 import relatorioRouter from "./relatorio.routes.js";
+import alunoRouter from "./aluno.routes.js";
 
 const routes = Router();
 
@@ -19,5 +20,6 @@ routes.use("/checklist", checklistRouter);
 routes.use("/measurements", measurementRouter);
 routes.use("/photos", photoRouter);
 routes.use("/relatorios", relatorioRouter);
+routes.use("/aluno", alunoRouter)
 
 export default routes;
