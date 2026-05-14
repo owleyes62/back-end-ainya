@@ -9,7 +9,7 @@
         "unicap",
         "serviço"
     ],
-    "main": "src/server.ts",
+    "main": "api/index.ts",
     "type": "module",
     "dependencies": {
         "@prisma/adapter-pg": "^7.7.0",
@@ -25,12 +25,11 @@
         "multer": "^1.4.5-lts.1",
         "path": "^0.12.7",
         "pg": "^8.20.0",
-        "serverless-http": "^4.0.0",
-        "tsx": "^4.17.0"
+        "serverless-http": "^4.0.0"
     },
     "scripts": {
-        "start": "tsx src/index.ts",
-        "dev": "tsx watch src/index.ts",
+        "start": "tsx api/index.ts",
+        "dev": "tsx watch api/index.ts",
         "build": "tsc",
         "entidade:new": "tsx cli/novaEntidade.ts",
         "entidade:del": "tsx cli/excluirEntidade.ts",
@@ -51,6 +50,7 @@
         "prisma": "^7.7.0",
         "supertest": "^7.2.2",
         "ts-jest": "^29.4.9",
-        "ts-node": "^10.9.2"
+        "ts-node": "^10.9.2",
+        "tsx": "^4.22.0"
     }
 }
