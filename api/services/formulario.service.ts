@@ -127,4 +127,64 @@ export class FormularioService {
 
         return result;
     }
+
+    static async findById(id: string) {
+        if (!id) {
+            throw new HttpError("id é obrigatório", 400);
+        }
+
+        const formulario = await prisma.formulario.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                list: {
+                    include: {
+                        plant: true,
+                        canteiro: true,
+                    },
+                },
+                checklists: {
+                    include: {
+                        template: true,
+                    },
+                },
+                measurements: {
+                    include: {
+                        template: true,
+                    },
+                },
+                photos: true,
+            },
+        });
+
+        if (!formulario) {
+            throw new HttpError("Formulário não encontrado", 404);
+        }
+
+        return formulario;
+    }
+
+    static async update(id: string, body: any) {
+        if (!id) {
+            throw new HttpError("id é obrigatório", 400);
+        }
+
+        const { type, observations, started_at, ended_at, synced } = body;
+
+        const formulario = await prisma.formulario.update({
+            where: {
+                id,
+            },
+            data: {
+                type,
+                observations,
+                started_at: started_at ? new Date(started_at) : undefined,
+                ended_at: ended_at ? new Date(ended_at) : undefined,
+                synced,
+            },
+        });
+
+        return formulario;
+    }
 }

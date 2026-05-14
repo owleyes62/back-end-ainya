@@ -90,4 +90,48 @@ export class FormularioController {
             });
         }
     }
+
+    static async findById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const formulario = await FormularioService.findById(id);
+
+            return res.status(200).json({
+                data: formulario,
+                error: null,
+                message: "Formulário encontrado com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao buscar formulário",
+            });
+        }
+    }
+
+    static async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const formulario = await FormularioService.update(id, req.body);
+
+            return res.status(200).json({
+                data: formulario,
+                error: null,
+                message: "Formulário atualizado com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao atualizar formulário",
+            });
+        }
+    }
 }

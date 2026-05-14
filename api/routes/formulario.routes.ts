@@ -7,16 +7,22 @@ import { upload } from "../middlewares/upload.middleware.js";
 
 const formularioRouter = Router();
 
-formularioRouter.post("/:id/checklist", ChecklistController.createManyForFormulario);
-formularioRouter.get("/:user_id", FormularioController.findAllByUser);
+formularioRouter.get("/", FormularioController.findAllByUser);
+formularioRouter.get("/:id", FormularioController.findById);
+
 formularioRouter.post("/", FormularioController.create);
+formularioRouter.post("/:id/checklist", ChecklistController.createManyForFormulario);
 formularioRouter.post("/:id/measurements", MeasurementController.createManyForFormulario);
-formularioRouter.patch("/:id/finalizar", FormularioController.finalizar);
-formularioRouter.post("/:id/sync", FormularioController.sync);
+
 formularioRouter.post(
     "/:id/photos",
     upload.single("photo"),
     PhotoController.createForFormulario
 );
+
+formularioRouter.patch("/:id", FormularioController.update);
+formularioRouter.patch("/:id/finalizar", FormularioController.finalizar);
+formularioRouter.post("/:id/sync", FormularioController.sync);
+
 
 export default formularioRouter;
