@@ -33,8 +33,6 @@ model AlunoTurma {
     
 model Canteiro {
     id        String           @id @default(uuid())
-    user_id   String
-    user      User             @relation(fields: [user_id], references: [id])
     plant_id  String
     plant     PlantaForrageira @relation(fields: [plant_id], references: [id])
     name     String
@@ -43,6 +41,7 @@ model Canteiro {
 
     listaDeFormularios ListaDeFormularios[]
     relatorios         Relatorio[]
+    users              UserCanteiro[]
 }
 
     
@@ -218,10 +217,21 @@ model User {
     updatedAt          DateTime @updatedAt
 
     alunoTurmas        AlunoTurma[]
-    canteiros          Canteiro[]
+    canteiros          UserCanteiro[]
     formularios        Formulario[]
     listasFormularios  ListaDeFormularios[]
     relatorios         Relatorio[]
     turmasCriadas      Turma[]
 }
 
+model UserCanteiro {
+  user_id     String
+  canteiro_id String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user     User     @relation(fields: [user_id], references: [id])
+  canteiro Canteiro @relation(fields: [canteiro_id], references: [id])
+
+  @@id([user_id, canteiro_id]) // chave primária composta
+}
