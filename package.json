@@ -29,7 +29,7 @@
     },
     "scripts": {
         "start": "tsx src/index.ts",
-        "dev": "tsx watch src/index.ts",
+        "dev": "tsx watch api/index.ts",
         "build": "tsc",
         "entidade:new": "tsx cli/novaEntidade.ts",
         "entidade:del": "tsx cli/excluirEntidade.ts",

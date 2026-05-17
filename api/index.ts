@@ -1,21 +1,23 @@
-import express from "express";
-import cors from "cors";
-import "dotenv/config";
-import { prisma } from "../lib/prisma";
-import routes from "./routes";
-
-//import router from "./routes/index";
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import routes from './routes/index.js'; 
 
 const app: express.Application = express();
+
 app.use(cors());
 app.use(express.json());
-//app.use(router);
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static("src/public"));
+app.get("/api/hello", (req: Request, res: Response) => {
+  return res.json({ message: "Hello Vercel 🚀" });
+});
 
 app.use("/api", routes);
 
 const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
-    console.log(`Teste n1 ${port}`);
+    console.log(`Server is running in http://localhost:${port}`);
 });
+
+export default app;
