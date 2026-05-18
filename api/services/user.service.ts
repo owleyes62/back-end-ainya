@@ -1,28 +1,27 @@
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
 import argon2 from "argon2";
+import { UserSchema } from "../schemas/user.schema.js";
 
 const isDev = process.env.NODE_ENV === "development";
 
 export class UserService {
-    static async create(body: any) {
-        const { name, email, password, institution } = body;
-
-        if (!name || !email || !password || !institution) {
-            throw new HttpError("Name, email, institution and password are required", 400);
+    static async create(body: UserSchema) {
+        if (!body.name || !body.email || !body.password) {
+            throw new HttpError("Name, email and password are required", 400);
         }
 
         await prisma.user.create({
             data: {
-                name,
-                email,
-                role: "aluno",
+                name: body.name,
+                email: body.email,
+                role: body.role,
                 institution: {
                     connect: {
-                        id: institution,
+                        id: body.institutionId,
                     },
                 },
-                password: await argon2.hash(password),
+                password: await argon2.hash(body.password),
             },
             include: {
                 institution: true,

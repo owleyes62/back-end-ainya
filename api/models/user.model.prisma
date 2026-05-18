@@ -12,7 +12,7 @@ model User {
     updatedAt          DateTime @updatedAt
 
     alunoTurmas        AlunoTurma[]
-    canteiros          Canteiro[]
+    canteiros          UserCanteiro[]
     formularios        Formulario[]
     listasFormularios  ListaDeFormularios[]
     relatorios         Relatorio[]
