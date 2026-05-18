@@ -20,6 +20,13 @@ model AcademicPeriod {
 }
 
     
+model aluno {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+    
 model AlunoTurma {
     id        String   @id @default(uuid())
     user_id   String
