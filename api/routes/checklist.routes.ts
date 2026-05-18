@@ -1,10 +1,9 @@
-
 import { Router } from "express";
 import { ChecklistController } from "../controllers/checklist.controller.js";
-            
+
 const checklistRouter = Router();
-            
-//checklistRouter.post("/", ChecklistController.createUser);
-            
+
+checklistRouter.patch("/:id", ChecklistController.updateChecked);
+checklistRouter.post("/", ChecklistController.create);
+
 export default checklistRouter;
-    

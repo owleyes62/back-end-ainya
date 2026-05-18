@@ -3,6 +3,7 @@ import { CanteiroController } from "../controllers/canteiro.controller.js";
 
 const canteiroRouter = Router();
 
+canteiroRouter.get("/", CanteiroController.findAllByUser);
 canteiroRouter.get("/usuario/:userId", CanteiroController.findByUser);
 canteiroRouter.post("/", CanteiroController.create);
 

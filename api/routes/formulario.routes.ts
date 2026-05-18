@@ -1,10 +1,28 @@
-
 import { Router } from "express";
 import { FormularioController } from "../controllers/formulario.controller.js";
-            
+import { ChecklistController } from "../controllers/checklist.controller.js";
+import { MeasurementController } from "../controllers/measurement.controller.js";
+import { PhotoController } from "../controllers/photo.controller.js";
+import { upload } from "../middlewares/upload.middleware.js";
+
 const formularioRouter = Router();
-            
-//formularioRouter.post("/", FormularioController.createUser);
-            
+
+formularioRouter.get("/", FormularioController.findAllByUser);
+formularioRouter.get("/:id", FormularioController.findById);
+
+formularioRouter.post("/", FormularioController.create);
+formularioRouter.post("/:id/checklist", ChecklistController.createManyForFormulario);
+formularioRouter.post("/:id/measurements", MeasurementController.createManyForFormulario);
+
+formularioRouter.post(
+    "/:id/photos",
+    upload.single("photo"),
+    PhotoController.createForFormulario
+);
+
+formularioRouter.patch("/:id", FormularioController.update);
+formularioRouter.patch("/:id/finalizar", FormularioController.finalizar);
+formularioRouter.post("/:id/sync", FormularioController.sync);
+
+
 export default formularioRouter;
-    
