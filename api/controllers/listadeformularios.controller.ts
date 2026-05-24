@@ -21,4 +21,24 @@ export class ListaDeFormulariosController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async findByCanteiro(req: Request, res: Response) {
+        try {
+            const { canteiroId } = req.params;
+            const listas = await ListaDeFormulariosService.findByCanteiro(canteiroId);
+            return res.status(200).json(listas);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async findFormularios(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const formularios = await ListaDeFormulariosService.findFormularios(id);
+            return res.status(200).json(formularios);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
