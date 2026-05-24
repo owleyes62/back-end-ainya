@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import { HttpError } from "../core/httpError.js";
 import { UserService } from "../services/user.service.js";
-        
+
 export class UserController {
     static async create(req: Request, res: Response) {
         try {
@@ -22,5 +22,24 @@ export class UserController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async findById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const user = await UserService.findById(id);
+            return res.status(200).json(user);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async updateProfile(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const user = await UserService.updateProfile(id, req.body);
+            return res.status(200).json(user);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
-    
