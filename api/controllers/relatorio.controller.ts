@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { HttpError } from "../core/httpError.js";
 import { RelatorioService } from "../services/relatorio.service.js";
-        
+
 export class RelatorioController {
 
     static async findByUser(req: Request, res: Response) {
         try {
-
-            const userId = req.params.userId as string; 
+            const userId = req.params.userId as string;
             const relatorios = await RelatorioService.getRelatoriosByUser(userId);
             return res.status(200).json(relatorios);
         } catch (err: HttpError | any) {
@@ -32,12 +31,9 @@ export class RelatorioController {
         }
     }
 
-    // Atividade 2 - Controlador para buscar relatório por ID
     static async findById(req: Request, res: Response) {
         try {
-            // Pega o ID que virá na URL (ex: /api/relatorios/12345)
             const id = req.params.id as string;
-            
             const relatorio = await RelatorioService.getRelatorioById(id);
             return res.status(200).json(relatorio);
         } catch (err: HttpError | any) {
@@ -46,11 +42,9 @@ export class RelatorioController {
         }
     }
 
-    // Atividade 2 - Controlador para atualizar o objetivo
     static async updateObjective(req: Request, res: Response) {
         try {
             const id = req.params.id as string;
-            // Pega o novo texto que o Front-end enviou no corpo da requisição
             const { objective } = req.body;
 
             if (objective === undefined) {
@@ -61,6 +55,71 @@ export class RelatorioController {
             return res.status(200).json(relatorioAtualizado);
         } catch (err: HttpError | any) {
             console.error("Error:", err);
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async updateIntroduction(req: Request, res: Response) {
+        return RelatorioController.handleSection(req, res, "introduction");
+    }
+
+    static async updateDevelopment(req: Request, res: Response) {
+        return RelatorioController.handleSection(req, res, "development");
+    }
+
+    static async updateFinalThoughts(req: Request, res: Response) {
+        return RelatorioController.handleSection(req, res, "final_thoughts");
+    }
+
+    static async updateReferences(req: Request, res: Response) {
+        return RelatorioController.handleSection(req, res, "references");
+    }
+
+    static async update(req: Request, res: Response) {
+        try {
+            const id = req.params.id as string;
+            const atualizado = await RelatorioService.update(id, req.body);
+            return res.status(200).json(atualizado);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async submit(req: Request, res: Response) {
+        try {
+            const id = req.params.id as string;
+            const submetido = await RelatorioService.submit(id);
+            return res.status(200).json(submetido);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async exportPdf(_req: Request, res: Response) {
+        return res.status(501).json({
+            error: "Export PDF não implementado",
+            message: "Funcionalidade ainda não disponível no back-end",
+        });
+    }
+
+    private static async handleSection(
+        req: Request,
+        res: Response,
+        secao: "introduction" | "objective" | "development" | "final_thoughts" | "references"
+    ) {
+        try {
+            const id = req.params.id as string;
+            const valor = req.body[secao];
+
+            if (valor === undefined) {
+                return res.status(400).json({
+                    error: `O campo ${secao} é obrigatório para atualização.`,
+                });
+            }
+
+            const atualizado = await RelatorioService.updateSection(id, secao, valor);
+            return res.status(200).json(atualizado);
+        } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
