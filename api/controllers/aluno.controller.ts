@@ -22,4 +22,24 @@ export class AlunoController {
             });
         }
     }
+
+    static async getHome(req: Request, res: Response) {
+        try {
+            const { userId } = req.params;
+
+            const home = await AlunoService.getHome(userId);
+
+            return res.status(200).json({
+                data: home,
+                error: null,
+                message: "Home do aluno carregada com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao carregar home do aluno",
+            });
+        }
+    }
 }
