@@ -5,11 +5,12 @@ import { PlantTemplateService } from "../services/planttemplate.service.js";
 export class PlantTemplateController {
     static async findAllByPlant(req: Request, res: Response) {
         try {
-            const { plant_id } = req.query;
+            const plantIdParam = req.params.plantId;
+            const plantIdQuery = req.query.plant_id;
+            const plant_id =
+                plantIdParam ?? (typeof plantIdQuery === "string" ? plantIdQuery : "");
 
-            const templates = await PlantTemplateService.findAllByPlant(
-                String(plant_id || "")
-            );
+            const templates = await PlantTemplateService.findAllByPlant(plant_id);
 
             return res.status(200).json({
                 data: templates,

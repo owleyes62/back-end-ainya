@@ -4,6 +4,7 @@ import { PlantTemplateController } from "../controllers/planttemplate.controller
 const planttemplateRouter = Router();
 
 planttemplateRouter.get("/", PlantTemplateController.findAllByPlant);
+planttemplateRouter.get("/plant/:plantId", PlantTemplateController.findAllByPlant);
 planttemplateRouter.post("/", PlantTemplateController.create);
 
 export default planttemplateRouter;
