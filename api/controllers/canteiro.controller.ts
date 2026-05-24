@@ -24,7 +24,7 @@ export class CanteiroController {
             });
         }
     }
-    
+
     static async findByUser(req: Request, res: Response) {
         try {
             const { userId } = req.params;
@@ -39,6 +39,16 @@ export class CanteiroController {
         try {
             const canteiro = await CanteiroService.create(req.body);
             return res.status(201).json(canteiro);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async findListas(req: Request, res: Response) {
+        try {
+            const { canteiroId } = req.params;
+            const listas = await CanteiroService.findListasByCanteiro(canteiroId);
+            return res.status(200).json(listas);
         } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });
         }
