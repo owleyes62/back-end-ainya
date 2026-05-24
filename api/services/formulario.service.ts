@@ -165,6 +165,41 @@ export class FormularioService {
         return formulario;
     }
 
+    static async getChecklist(id: string) {
+        if (!id) throw new HttpError("id é obrigatório", 400);
+
+        return prisma.checklist.findMany({
+            where: { form_id: id },
+            include: {
+                template: {
+                    select: { id: true, field_name: true, unit: true },
+                },
+            },
+        });
+    }
+
+    static async getMeasurements(id: string) {
+        if (!id) throw new HttpError("id é obrigatório", 400);
+
+        return prisma.measurement.findMany({
+            where: { form_id: id },
+            include: {
+                template: {
+                    select: { id: true, field_name: true, unit: true },
+                },
+            },
+        });
+    }
+
+    static async getPhotos(id: string) {
+        if (!id) throw new HttpError("id é obrigatório", 400);
+
+        return prisma.photo.findMany({
+            where: { form_id: id },
+            orderBy: { takenAt: "desc" },
+        });
+    }
+
     static async update(id: string, body: any) {
         if (!id) {
             throw new HttpError("id é obrigatório", 400);

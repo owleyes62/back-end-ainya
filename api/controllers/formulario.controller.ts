@@ -5,11 +5,12 @@ import { FormularioService } from "../services/formulario.service.js";
 export class FormularioController {
     static async findAllByUser(req: Request, res: Response) {
         try {
-            const { user_id } = req.query;
+            const userIdParam = req.params.userId;
+            const userIdQuery = req.query.user_id;
+            const userId =
+                userIdParam ?? (typeof userIdQuery === "string" ? userIdQuery : "");
 
-            const formularios = await FormularioService.findAllByUser(
-                String(user_id || "")
-            );
+            const formularios = await FormularioService.findAllByUser(userId);
 
             return res.status(200).json({
                 data: formularios,
@@ -24,6 +25,36 @@ export class FormularioController {
                 error: err.message,
                 message: "Erro ao buscar formulários",
             });
+        }
+    }
+
+    static async getChecklist(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const checklist = await FormularioService.getChecklist(id);
+            return res.status(200).json(checklist);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async getMeasurements(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const measurements = await FormularioService.getMeasurements(id);
+            return res.status(200).json(measurements);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
+
+    static async getPhotos(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const photos = await FormularioService.getPhotos(id);
+            return res.status(200).json(photos);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
         }
     }
 
