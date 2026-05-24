@@ -25,6 +25,28 @@ async function main() {
 
   console.log('Instituição criada/atualizada')
 
+  if (Array.isArray(data.academic_periods)) {
+    for (const periodo of data.academic_periods) {
+      await prisma.academicPeriod.upsert({
+        where: { id: periodo.id },
+        update: {
+          name: periodo.name,
+          semester: periodo.semester,
+          start_date: new Date(periodo.start_date),
+          end_date: new Date(periodo.end_date),
+        },
+        create: {
+          id: periodo.id,
+          name: periodo.name,
+          semester: periodo.semester,
+          start_date: new Date(periodo.start_date),
+          end_date: new Date(periodo.end_date),
+        },
+      })
+    }
+    console.log('Períodos letivos criados/atualizados')
+  }
+
   for (const planta of data.plantas_forrageiras) {
     await prisma.plantaForrageira.upsert({
       where: {

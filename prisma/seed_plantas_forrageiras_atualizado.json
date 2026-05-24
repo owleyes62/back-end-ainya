@@ -12,6 +12,22 @@
     "id": "uuid-instituicao-001",
     "name": "UFRPE - Departamento de Zootecnia"
   },
+  "academic_periods": [
+    {
+      "id": "period-2026-1",
+      "name": "2026.1",
+      "semester": "PRIMEIRO",
+      "start_date": "2026-02-01T00:00:00.000Z",
+      "end_date": "2026-07-15T23:59:59.000Z"
+    },
+    {
+      "id": "period-2026-2",
+      "name": "2026.2",
+      "semester": "SEGUNDO",
+      "start_date": "2026-08-01T00:00:00.000Z",
+      "end_date": "2026-12-15T23:59:59.000Z"
+    }
+  ],
   "plantas_forrageiras": [
     {
       "id": "pf-001",
