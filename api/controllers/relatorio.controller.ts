@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import PDFDocument from "pdfkit";
 import { HttpError } from "../core/httpError.js";
 import { RelatorioService } from "../services/relatorio.service.js";
 
@@ -95,11 +96,61 @@ export class RelatorioController {
         }
     }
 
-    static async exportPdf(_req: Request, res: Response) {
-        return res.status(501).json({
-            error: "Export PDF não implementado",
-            message: "Funcionalidade ainda não disponível no back-end",
-        });
+    static async exportPdf(req: Request, res: Response) {
+        try {
+            const id = req.params.id as string;
+            const relatorio: any = await RelatorioService.getRelatorioById(id);
+
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="relatorio-${id}.pdf"`
+            );
+
+            const doc = new PDFDocument({ size: "A4", margin: 50 });
+            doc.pipe(res);
+
+            const planta = relatorio.list?.plant?.name ?? "—";
+            const canteiro = relatorio.canteiro?.name ?? "—";
+
+            doc.fontSize(18).text("Relatório", { align: "center" });
+            doc.moveDown();
+            doc.fontSize(10).text(`ID: ${relatorio.id}`);
+            doc.text(`Status: ${relatorio.status}`);
+            doc.text(`Planta: ${planta}`);
+            doc.text(`Canteiro: ${canteiro}`);
+            doc.text(
+                `Gerado em: ${new Date(relatorio.createdAt).toLocaleString("pt-BR")}`
+            );
+            doc.moveDown();
+
+            const secoes: Array<{ titulo: string; campo: string }> = [
+                { titulo: "Introdução", campo: "introduction" },
+                { titulo: "Objetivo", campo: "objective" },
+                { titulo: "Desenvolvimento", campo: "development" },
+                { titulo: "Considerações Finais", campo: "final_thoughts" },
+                { titulo: "Referências", campo: "references" },
+            ];
+
+            for (const { titulo, campo } of secoes) {
+                doc.fontSize(14).text(titulo, { underline: true });
+                doc.moveDown(0.3);
+                doc.fontSize(11).text(relatorio[campo] || "(vazio)", {
+                    align: "justify",
+                });
+                doc.moveDown();
+            }
+
+            doc.end();
+        } catch (err: HttpError | any) {
+            console.error("Error:", err);
+            if (!res.headersSent) {
+                return res
+                    .status(err.status || 500)
+                    .json({ error: err.message });
+            }
+            res.end();
+        }
     }
 
     private static async handleSection(
