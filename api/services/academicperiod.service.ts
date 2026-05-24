@@ -1,23 +1,28 @@
-
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
 
 export class AcademicPeriodService {
-    static async create(body: any) {
-        //const { name, email, password } = body;
+    static async getActive() {
+        const now = new Date();
 
-        //if (!name || !email || !password) {
-        //    throw new HttpError("Name, email, and password are required", 400);
-        //}
+        const period = await prisma.academicPeriod.findFirst({
+            where: {
+                start_date: { lte: now },
+                end_date: { gte: now },
+            },
+            orderBy: { start_date: "desc" },
+        });
 
-        //const academicperiod = await prisma.academicperiod.create({
-        //    data: {
-        //        
-        //    },
-        //    include: {
-        //        
-        //    },
-        //});
+        if (!period) {
+            throw new HttpError("Nenhum período letivo ativo encontrado", 404);
+        }
+
+        return period;
+    }
+
+    static async findAll() {
+        return prisma.academicPeriod.findMany({
+            orderBy: { start_date: "desc" },
+        });
     }
 }
-    
