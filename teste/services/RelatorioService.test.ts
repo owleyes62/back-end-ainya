@@ -1,10 +1,10 @@
 
-import { RelatorioService } from "../../src/services/RelatorioService";
+import { RelatorioService } from "../../api/services/RelatorioService";
 import {
   IRelatorioRepository,
   IRegistroRepository,
   IPeriodoRepository,
-} from "../../src/models/repositories";
+} from "../../api/models/repositories";
 import {
   Relatorio,
   RegistroSemanal,
@@ -13,7 +13,7 @@ import {
   Periodo,
   UpdateRelatorioDTO,
   SubmeterRelatorioDTO,
-} from "../../src/models/types";
+} from "../../api/models/types";
 
 // ── Fixtures ─────────────────────────────────────────────────
 

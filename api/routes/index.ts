@@ -9,6 +9,15 @@ import institutionRouter from "./institution.routes.js";
 
 const routes = Router();
 
+routes.get("/health", (_req, res) => {
+    return res.status(200).json({
+        status: "ok",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV ?? "development",
+    });
+});
+
 routes.use("/users", userRouter);
 routes.use("/institutions", institutionRouter);
 routes.use("/formularios", formularioRouter);

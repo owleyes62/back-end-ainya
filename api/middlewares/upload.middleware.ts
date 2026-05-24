@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
 
-const uploadDir = path.resolve("src/public/uploads");
+const uploadDir = path.resolve("public/uploads");
 
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });

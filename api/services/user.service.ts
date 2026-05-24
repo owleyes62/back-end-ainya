@@ -16,12 +16,12 @@ export class UserService {
                 name: body.name,
                 email: body.email,
                 role: body.role,
-                institution: {
-                    connect: {
-                        id: body.institutionId,
-                    },
-                },
                 password: await argon2.hash(body.password),
+                ...(body.institutionId && {
+                    institution: {
+                        connect: { id: body.institutionId },
+                    },
+                }),
             },
             include: {
                 institution: true,

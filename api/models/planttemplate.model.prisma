@@ -5,8 +5,8 @@ model PlantTemplate {
     planta_forrageira PlantaForrageira @relation(fields: [plant_id], references: [id])
     field_name        String
     unit              String
-    createdA          DateTime         @default(now())
-    updatedA          DateTime         @updatedAt
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
 
     checklists   Checklist[]
     measurements Measurement[]

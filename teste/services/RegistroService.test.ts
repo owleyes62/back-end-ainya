@@ -1,13 +1,13 @@
 
 
-import { RegistroService } from "../../src/services/RegistroService";
-import { IRegistroRepository } from "../../src/models/repositories";
+import { RegistroService } from "../../api/services/RegistroService";
+import { IRegistroRepository } from "../../api/models/repositories";
 import {
   CreateRegistroDTO,
   RegistroSemanal,
   ChecklistManejo,
   Medicoes,
-} from "../../src/models/types";
+} from "../../api/models/types";
 
 // ── Fixtures ─────────────────────────────────────────────────
 
