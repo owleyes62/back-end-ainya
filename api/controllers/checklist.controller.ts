@@ -52,6 +52,24 @@ export class ChecklistController {
         }
     }
 
+    static async findByFormulario(req: Request, res: Response) {
+        try {
+            const { formularioId } = req.params;
+            const checklist = await ChecklistService.findByFormulario(formularioId);
+            return res.status(200).json({
+                data: checklist,
+                error: null,
+                message: "Checklist encontrado com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao buscar checklist",
+            });
+        }
+    }
+
     static async create(req: Request, res: Response) {
         try {
             const checklist = await ChecklistService.create(req.body);

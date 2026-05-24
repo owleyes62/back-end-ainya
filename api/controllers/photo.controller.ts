@@ -34,6 +34,24 @@ export class PhotoController {
         }
     }
 
+    static async findByFormulario(req: Request, res: Response) {
+        try {
+            const { formularioId } = req.params;
+            const photos = await PhotoService.findByFormulario(formularioId);
+            return res.status(200).json({
+                data: photos,
+                error: null,
+                message: "Fotos encontradas com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao buscar fotos",
+            });
+        }
+    }
+
     static async create(req: Request, res: Response) {
         try {
             const photo = await PhotoService.create(req.body);

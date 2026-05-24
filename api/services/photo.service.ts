@@ -21,6 +21,17 @@ export class PhotoService {
         return photo;
     }
 
+    static async findByFormulario(form_id: string) {
+        if (!form_id) {
+            throw new HttpError("form_id é obrigatório", 400);
+        }
+
+        return prisma.photo.findMany({
+            where: { form_id },
+            orderBy: { takenAt: "desc" },
+        });
+    }
+
     static async delete(id: string) {
         if (!id) {
             throw new HttpError("id é obrigatório", 400);
@@ -44,7 +55,7 @@ export class PhotoService {
 
         if (photo.url.startsWith("/uploads/")) {
             const filename = photo.url.replace("/uploads/", "");
-            const filePath = path.resolve("src/public/uploads", filename);
+            const filePath = path.resolve("public/uploads", filename);
 
             if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath);

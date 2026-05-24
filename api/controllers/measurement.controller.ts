@@ -52,6 +52,24 @@ export class MeasurementController {
         }
     }
 
+    static async findByFormulario(req: Request, res: Response) {
+        try {
+            const { formularioId } = req.params;
+            const measurements = await MeasurementService.findByFormulario(formularioId);
+            return res.status(200).json({
+                data: measurements,
+                error: null,
+                message: "Medições encontradas com sucesso",
+            });
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({
+                data: null,
+                error: err.message,
+                message: "Erro ao buscar medições",
+            });
+        }
+    }
+
     static async create(req: Request, res: Response) {
         try {
             const measurement = await MeasurementService.create(req.body);

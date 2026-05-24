@@ -46,6 +46,21 @@ export class MeasurementService {
         return measurement;
     }
 
+    static async findByFormulario(form_id: string) {
+        if (!form_id) {
+            throw new HttpError("form_id é obrigatório", 400);
+        }
+
+        return prisma.measurement.findMany({
+            where: { form_id },
+            include: {
+                template: {
+                    select: { id: true, field_name: true, unit: true },
+                },
+            },
+        });
+    }
+
     static async create(body: any) {
         const { form_id, template_id, value } = body;
 
