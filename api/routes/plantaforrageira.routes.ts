@@ -4,5 +4,6 @@ import { PlantaForrageiraController } from "../controllers/plantaforrageira.cont
 const plantaforrageiraRouter = Router();
 
 plantaforrageiraRouter.get("/", PlantaForrageiraController.findAll);
+plantaforrageiraRouter.get("/:id", PlantaForrageiraController.findById);
 
 export default plantaforrageiraRouter;

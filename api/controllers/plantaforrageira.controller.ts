@@ -14,4 +14,14 @@ export class PlantaForrageiraController {
             return res.status(err.status || 500).json({ error: err.message });
         }
     }
+
+    static async findById(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const planta = await PlantaForrageiraService.findById(id);
+            return res.status(200).json(planta);
+        } catch (err: HttpError | any) {
+            return res.status(err.status || 500).json({ error: err.message });
+        }
+    }
 }
