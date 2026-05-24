@@ -12,6 +12,15 @@ CREATE TABLE "AcademicPeriod" (
 );
 
 -- CreateTable
+CREATE TABLE "aluno" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "aluno_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "AlunoTurma" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -25,7 +34,6 @@ CREATE TABLE "AlunoTurma" (
 -- CreateTable
 CREATE TABLE "Canteiro" (
     "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
     "plant_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -117,8 +125,8 @@ CREATE TABLE "PlantTemplate" (
     "plant_id" TEXT NOT NULL,
     "field_name" TEXT NOT NULL,
     "unit" TEXT NOT NULL,
-    "createdA" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedA" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "PlantTemplate_pkey" PRIMARY KEY ("id")
 );
@@ -169,6 +177,16 @@ CREATE TABLE "Turma" (
     CONSTRAINT "Turma_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "UserCanteiro" (
+    "user_id" TEXT NOT NULL,
+    "canteiro_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UserCanteiro_pkey" PRIMARY KEY ("user_id","canteiro_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
 
@@ -180,9 +198,6 @@ ALTER TABLE "AlunoTurma" ADD CONSTRAINT "AlunoTurma_user_id_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "AlunoTurma" ADD CONSTRAINT "AlunoTurma_turma_id_fkey" FOREIGN KEY ("turma_id") REFERENCES "Turma"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Canteiro" ADD CONSTRAINT "Canteiro_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Canteiro" ADD CONSTRAINT "Canteiro_plant_id_fkey" FOREIGN KEY ("plant_id") REFERENCES "PlantaForrageira"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -240,3 +255,9 @@ ALTER TABLE "Turma" ADD CONSTRAINT "Turma_period_id_fkey" FOREIGN KEY ("period_i
 
 -- AddForeignKey
 ALTER TABLE "Turma" ADD CONSTRAINT "Turma_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserCanteiro" ADD CONSTRAINT "UserCanteiro_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserCanteiro" ADD CONSTRAINT "UserCanteiro_canteiro_id_fkey" FOREIGN KEY ("canteiro_id") REFERENCES "Canteiro"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
