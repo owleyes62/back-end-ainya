@@ -23,8 +23,12 @@ app.use("/api", routes);
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-    console.log(`Server is running in http://localhost:${port}`);
-});
+// Na Vercel o app é importado como handler serverless — listen não deve rodar.
+// Localmente (npm run start / dev) a env VERCEL não existe, então sobe normal.
+if (!process.env.VERCEL) {
+    app.listen(port, () => {
+        console.log(`Server is running in http://localhost:${port}`);
+    });
+}
 
 export default app;
