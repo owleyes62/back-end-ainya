@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { put } from "@vercel/blob";
 import { HttpError } from "../core/httpError.js";
 import { PhotoService } from "../services/photo.service.js";
 
@@ -11,7 +12,20 @@ export class PhotoController {
                 throw new HttpError("Arquivo de foto é obrigatório", 400);
             }
 
-            const fileUrl = `/uploads/${req.file.filename}`;
+            // Em prod (Vercel) o multer usa memoryStorage → req.file.buffer.
+            // Em dev usa diskStorage → req.file.filename.
+            let fileUrl: string;
+
+            if (process.env.VERCEL) {
+                const blob = await put(
+                    `photos/${Date.now()}-${req.file.originalname}`,
+                    req.file.buffer,
+                    { access: "public", contentType: req.file.mimetype }
+                );
+                fileUrl = blob.url;
+            } else {
+                fileUrl = `/uploads/${req.file.filename}`;
+            }
 
             const photo = await PhotoService.create({
                 form_id: id,

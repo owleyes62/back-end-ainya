@@ -28,8 +28,16 @@ jest.mock("../../lib/prisma", () => ({
 // MOCK do argon2: hash e verify viram funções fake
 jest.mock("argon2");
 
+// MOCK do @vercel/blob: del é chamado pelo updateAvatar pra limpar o arquivo anterior
+jest.mock("@vercel/blob", () => ({
+    del: jest.fn(),
+}));
+
+import { del } from "@vercel/blob";
+
 const prismaUserMock = prisma.user as jest.Mocked<typeof prisma.user>;
 const argon2Mock = argon2 as jest.Mocked<typeof argon2>;
+const delMock = del as jest.Mock;
 
 // STUB de usuário usado por vários testes
 const userStub = {
@@ -226,6 +234,95 @@ describe("UserService", () => {
         it("deve lançar 400 quando id estiver vazio", async () => {
             await expect(
                 UserService.updateProfile("", { name: "João" })
+            ).rejects.toMatchObject({ status: 400 });
+        });
+    });
+
+    // ──────────────────────────────────────────────
+    // updateAvatar
+    // ──────────────────────────────────────────────
+    describe("updateAvatar", () => {
+        const newUrl = "https://xyz.public.blob.vercel-storage.com/avatars/novo.jpg";
+
+        it("deve atualizar avatarUrl e retornar o user", async () => {
+            prismaUserMock.findUnique.mockResolvedValue({ avatarUrl: null } as any);
+            prismaUserMock.update.mockResolvedValue({
+                ...userStub,
+                avatarUrl: newUrl,
+            } as any);
+
+            const result = await UserService.updateAvatar("user-id-1", newUrl);
+
+            expect(prismaUserMock.update).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    where: { id: "user-id-1" },
+                    data: { avatarUrl: newUrl },
+                })
+            );
+            expect(result.avatarUrl).toBe(newUrl);
+            // sem avatar anterior → não chama del
+            expect(delMock).not.toHaveBeenCalled();
+        });
+
+        it("deve chamar del() do Blob no avatar anterior se for URL http", async () => {
+            const oldUrl = "https://xyz.public.blob.vercel-storage.com/avatars/antigo.jpg";
+            prismaUserMock.findUnique.mockResolvedValue({ avatarUrl: oldUrl } as any);
+            prismaUserMock.update.mockResolvedValue({
+                ...userStub,
+                avatarUrl: newUrl,
+            } as any);
+            delMock.mockResolvedValue(undefined);
+
+            await UserService.updateAvatar("user-id-1", newUrl);
+
+            expect(delMock).toHaveBeenCalledWith(oldUrl);
+        });
+
+        it("não deve chamar del() se a nova URL for igual à anterior", async () => {
+            prismaUserMock.findUnique.mockResolvedValue({ avatarUrl: newUrl } as any);
+            prismaUserMock.update.mockResolvedValue({
+                ...userStub,
+                avatarUrl: newUrl,
+            } as any);
+
+            await UserService.updateAvatar("user-id-1", newUrl);
+
+            expect(delMock).not.toHaveBeenCalled();
+        });
+
+        it("não deve quebrar o request se del() falhar", async () => {
+            prismaUserMock.findUnique.mockResolvedValue({
+                avatarUrl: "https://xyz.public.blob.vercel-storage.com/x.jpg",
+            } as any);
+            prismaUserMock.update.mockResolvedValue({
+                ...userStub,
+                avatarUrl: newUrl,
+            } as any);
+            delMock.mockRejectedValue(new Error("Blob fora do ar"));
+
+            await expect(
+                UserService.updateAvatar("user-id-1", newUrl)
+            ).resolves.toMatchObject({ avatarUrl: newUrl });
+        });
+
+        it("deve lançar 404 quando o usuário não existir", async () => {
+            prismaUserMock.findUnique.mockResolvedValue(null);
+
+            await expect(
+                UserService.updateAvatar("nao-existe", newUrl)
+            ).rejects.toMatchObject({ status: 404 });
+            expect(prismaUserMock.update).not.toHaveBeenCalled();
+        });
+
+        it("deve lançar 400 quando id estiver vazio", async () => {
+            await expect(
+                UserService.updateAvatar("", newUrl)
+            ).rejects.toMatchObject({ status: 400 });
+        });
+
+        it("deve lançar 400 quando newUrl estiver vazio", async () => {
+            await expect(
+                UserService.updateAvatar("user-id-1", "")
             ).rejects.toMatchObject({ status: 400 });
         });
     });
