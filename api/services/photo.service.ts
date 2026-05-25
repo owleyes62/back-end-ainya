@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import { HttpError } from "../core/httpError.js";
+import { del } from "@vercel/blob";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -38,9 +39,7 @@ export class PhotoService {
         }
 
         const photo = await prisma.photo.findUnique({
-            where: {
-                id,
-            },
+            where: { id },
         });
 
         if (!photo) {
@@ -48,18 +47,27 @@ export class PhotoService {
         }
 
         await prisma.photo.delete({
-            where: {
-                id,
-            },
+            where: { id },
         });
 
-        if (photo.url.startsWith("/uploads/")) {
-            const filename = photo.url.replace("/uploads/", "");
-            const filePath = path.resolve("public/uploads", filename);
+        // Limpa o arquivo físico baseado no formato da URL.
+        // Try/catch para não falhar o request se o arquivo já tiver sumido
+        // (ex.: foto deletada manualmente do Blob ou do disco).
+        try {
+            if (photo.url.startsWith("http")) {
+                // URL de Blob → apaga via API do @vercel/blob
+                await del(photo.url);
+            } else if (photo.url.startsWith("/uploads/")) {
+                // Caminho local → apaga do disco
+                const filename = photo.url.replace("/uploads/", "");
+                const filePath = path.resolve("public/uploads", filename);
 
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
             }
+        } catch (err) {
+            console.error("Falha ao remover arquivo físico da foto:", err);
         }
 
         return photo;
