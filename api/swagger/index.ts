@@ -34,6 +34,7 @@ export const swaggerSpec = {
             "API do projeto DonkeyCode. Use este Swagger para testar os endpoints.",
     },
     servers: [
+        { url: "https://back-end-ainya.vercel.app/api", description: "produção (Vercel)" },
         { url: `http://localhost:${port}/api`, description: "local" },
     ],
     tags: [
