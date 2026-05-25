@@ -8,6 +8,7 @@ export const userPaths = {
         post: {
             tags: ["Users"],
             summary: "Cadastrar usuário",
+            security: [],
             requestBody: {
                 required: true,
                 content: {

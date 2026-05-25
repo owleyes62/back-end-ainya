@@ -62,6 +62,9 @@ export const swaggerSpec = {
         },
         schemas,
     },
+    // Por padrão todos os endpoints exigem Bearer accessToken.
+    // Endpoints públicos sobrescrevem com `security: []` no próprio path.
+    security: [{ bearerAuth: [] }],
     paths: {
         ...healthPaths,
         ...authPaths,

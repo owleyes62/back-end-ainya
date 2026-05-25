@@ -3,6 +3,7 @@ export const authPaths = {
         post: {
             tags: ["Auth"],
             summary: "Login",
+            security: [],
             requestBody: {
                 required: true,
                 content: {
@@ -28,6 +29,7 @@ export const authPaths = {
         post: {
             tags: ["Auth"],
             summary: "Renovar accessToken",
+            security: [],
             requestBody: {
                 required: true,
                 content: {
@@ -43,6 +45,7 @@ export const authPaths = {
         post: {
             tags: ["Auth"],
             summary: "Logout",
+            security: [],
             requestBody: {
                 required: true,
                 content: {
