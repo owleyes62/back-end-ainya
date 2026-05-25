@@ -14,7 +14,21 @@ app.get("/api/hello", (req: Request, res: Response) => {
   return res.json({ message: "Hello Vercel 🚀" });
 });
 
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// CSS e JS do Swagger UI servidos via CDN para funcionar no Vercel serverless
+// (express.static do swagger-ui-express não enxerga node_modules no deploy).
+const swaggerUiOptions = {
+    customCssUrl: "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
+    customJs: [
+        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js",
+    ],
+};
+
+app.use(
+    "/api/docs",
+    swaggerUi.serveFiles(swaggerSpec, swaggerUiOptions),
+    swaggerUi.setup(swaggerSpec, swaggerUiOptions)
+);
 app.get("/api/docs.json", (_req: Request, res: Response) => {
   res.json(swaggerSpec);
 });
