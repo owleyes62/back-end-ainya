@@ -6,14 +6,14 @@
 
 process.env.JWT_SECRET = "test-secret";
 
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth.service";
 
 // MOCK do Prisma
-jest.mock("../../lib/prisma", () => ({
+jest.mock("../../../lib/prisma", () => ({
     prisma: {
         user: {
             findUnique: jest.fn(),
