@@ -8,13 +8,13 @@
 //
 // Nenhum teste toca no banco real.
 
-import { UserService } from "./user.service";
-import { prisma } from "../../lib/prisma";
+import { UserService } from "../user.service";
+import { prisma } from "../../../lib/prisma";
 import argon2 from "argon2";
-import { HttpError } from "../core/httpError";
+import { HttpError } from "../../core/httpError";
 
 // MOCK do Prisma Client: substitui métodos por jest.fn()
-jest.mock("../../lib/prisma", () => ({
+jest.mock("../../../lib/prisma", () => ({
     prisma: {
         user: {
             create: jest.fn(),
