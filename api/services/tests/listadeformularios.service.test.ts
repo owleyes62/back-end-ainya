@@ -16,6 +16,9 @@ jest.mock("../../../lib/prisma", () => ({
         formulario: {
             findMany: jest.fn(),
         },
+        canteiro: {
+            findUnique: jest.fn(),
+        },
     },
 }));
 
@@ -27,6 +30,7 @@ jest.mock("../usercanteiro.service", () => ({
 
 const listaMock = prisma.listaDeFormularios as jest.Mocked<typeof prisma.listaDeFormularios>;
 const formMock = prisma.formulario as jest.Mocked<typeof prisma.formulario>;
+const canteiroMock = prisma.canteiro as jest.Mocked<typeof prisma.canteiro>;
 const existsMock = UserCanteiroService.exists as jest.Mock;
 
 const listaStub = {
@@ -43,18 +47,22 @@ beforeEach(() => {
 
 describe("ListaDeFormulariosService", () => {
     describe("create", () => {
-        it("deve criar a lista quando o usuário está vinculado ao canteiro", async () => {
+        it("deve criar a lista quando o usuário está vinculado ao canteiro (plant_id derivado do canteiro)", async () => {
             existsMock.mockResolvedValue(true);
+            canteiroMock.findUnique.mockResolvedValue({ plant_id: "p1" } as any);
             listaMock.create.mockResolvedValue(listaStub);
 
             const result = await ListaDeFormulariosService.create({
                 canteiro_id: "cant-1",
-                plant_id: "p1",
                 created_by: "user-1",
                 name: "Lista A",
             });
 
             expect(existsMock).toHaveBeenCalledWith("user-1", "cant-1");
+            // service busca o canteiro só para pegar o plant_id
+            expect(canteiroMock.findUnique).toHaveBeenCalledWith(
+                expect.objectContaining({ where: { id: "cant-1" } })
+            );
             expect(listaMock.create).toHaveBeenCalledWith(
                 expect.objectContaining({
                     data: {
@@ -72,7 +80,6 @@ describe("ListaDeFormulariosService", () => {
             await expect(
                 ListaDeFormulariosService.create({
                     canteiro_id: "",
-                    plant_id: "p1",
                     created_by: "u",
                 })
             ).rejects.toMatchObject({ status: 400 });
@@ -83,7 +90,6 @@ describe("ListaDeFormulariosService", () => {
             await expect(
                 ListaDeFormulariosService.create({
                     canteiro_id: "c",
-                    plant_id: "p",
                     created_by: "u",
                     name: "A",
                 })
@@ -96,10 +102,24 @@ describe("ListaDeFormulariosService", () => {
             await expect(
                 ListaDeFormulariosService.create({
                     canteiro_id: "cant-1",
-                    plant_id: "p1",
                     created_by: "user-1",
                 })
             ).rejects.toMatchObject({ status: 403 });
+
+            expect(listaMock.create).not.toHaveBeenCalled();
+            expect(canteiroMock.findUnique).not.toHaveBeenCalled();
+        });
+
+        it("deve lançar 404 quando o canteiro não existir", async () => {
+            existsMock.mockResolvedValue(true);
+            canteiroMock.findUnique.mockResolvedValue(null);
+
+            await expect(
+                ListaDeFormulariosService.create({
+                    canteiro_id: "fantasma",
+                    created_by: "user-1",
+                })
+            ).rejects.toMatchObject({ status: 404 });
 
             expect(listaMock.create).not.toHaveBeenCalled();
         });

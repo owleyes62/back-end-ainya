@@ -72,10 +72,9 @@ export const schemas = {
     },
     ListaCreate: {
         type: "object",
-        required: ["canteiro_id", "plant_id", "created_by"],
+        required: ["canteiro_id", "created_by"],
         properties: {
             canteiro_id: { type: "string" },
-            plant_id: { type: "string" },
             created_by: { type: "string" },
             name: { type: "string" },
         },

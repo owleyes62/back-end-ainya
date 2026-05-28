@@ -5,14 +5,13 @@ import { UserCanteiroService } from "./usercanteiro.service.js";
 export class ListaDeFormulariosService {
     static async create(body: {
         canteiro_id: string;
-        plant_id: string;
         created_by: string;
         name?: string;
     }) {
-        const { canteiro_id, plant_id, created_by, name } = body;
-        if (!canteiro_id || !plant_id || !created_by) {
+        const { canteiro_id, created_by, name } = body;
+        if (!canteiro_id || !created_by) {
             throw new HttpError(
-                "canteiro_id, plant_id e created_by são obrigatórios",
+                "canteiro_id e created_by são obrigatórios",
                 400
             );
         }
@@ -29,8 +28,22 @@ export class ListaDeFormulariosService {
             );
         }
 
+        // plant_id deixou de ser do body: derivamos do canteiro para garantir consistência.
+        const canteiro = await prisma.canteiro.findUnique({
+            where: { id: canteiro_id },
+            select: { plant_id: true },
+        });
+        if (!canteiro) {
+            throw new HttpError("Canteiro não encontrado", 404);
+        }
+
         return prisma.listaDeFormularios.create({
-            data: { canteiro_id, plant_id, created_by, name },
+            data: {
+                canteiro_id,
+                plant_id: canteiro.plant_id,
+                created_by,
+                name,
+            },
             include: {
                 plant: { select: { id: true, name: true, category: true } },
             },
