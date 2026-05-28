@@ -37,7 +37,11 @@ export class CanteiroController {
 
     static async create(req: Request, res: Response) {
         try {
-            const canteiro = await CanteiroService.create(req.body);
+            // Vincula automaticamente o criador (user_id sempre vem do JWT).
+            const canteiro = await CanteiroService.create({
+                ...req.body,
+                user_id: req.user!.id,
+            });
             return res.status(201).json(canteiro);
         } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });

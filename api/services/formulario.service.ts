@@ -30,7 +30,7 @@ export class FormularioService {
         const { list_id, user_id, type, observations } = body;
 
         if (!list_id || !user_id || !type) {
-            throw new HttpError("list_id, user_id and type are required", 400);
+            throw new HttpError("list_id and type are required", 400);
         }
 
         const formulario = await prisma.formulario.create({

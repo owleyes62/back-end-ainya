@@ -37,6 +37,10 @@ export class UserController {
     static async updateProfile(req: Request, res: Response) {
         try {
             const { id } = req.params;
+            // Só o próprio usuário pode atualizar o perfil.
+            if (req.user!.id !== id) {
+                throw new HttpError("Você só pode atualizar o próprio perfil", 403);
+            }
             const user = await UserService.updateProfile(id, req.body);
             return res.status(200).json(user);
         } catch (err: HttpError | any) {
@@ -47,6 +51,10 @@ export class UserController {
     static async updateAvatar(req: Request, res: Response) {
         try {
             const { id } = req.params;
+            // Só o próprio usuário pode trocar o avatar.
+            if (req.user!.id !== id) {
+                throw new HttpError("Você só pode atualizar o próprio avatar", 403);
+            }
 
             if (!req.file) {
                 throw new HttpError("Arquivo de avatar é obrigatório", 400);

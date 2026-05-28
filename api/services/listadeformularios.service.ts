@@ -11,7 +11,7 @@ export class ListaDeFormulariosService {
         const { canteiro_id, created_by, name } = body;
         if (!canteiro_id || !created_by) {
             throw new HttpError(
-                "canteiro_id e created_by são obrigatórios",
+                "canteiro_id é obrigatório",
                 400
             );
         }

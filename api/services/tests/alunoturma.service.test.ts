@@ -9,7 +9,7 @@ jest.mock("../../../lib/prisma", () => ({
         user: { findUnique: jest.fn() },
         turma: { findUnique: jest.fn() },
         alunoTurma: {
-            findFirst: jest.fn(),
+            findUnique: jest.fn(),
             create: jest.fn(),
             findMany: jest.fn(),
         },
@@ -33,7 +33,7 @@ describe("AlunoTurmaService", () => {
         it("deve criar vínculo quando user e turma existem e ainda não estão vinculados", async () => {
             userMock.findUnique.mockResolvedValue(userStub);
             turmaMock.findUnique.mockResolvedValue(turmaStub);
-            alunoTurmaMock.findFirst.mockResolvedValue(null);
+            alunoTurmaMock.findUnique.mockResolvedValue(null);
             alunoTurmaMock.create.mockResolvedValue(vinculoStub);
 
             const result = await AlunoTurmaService.create({
@@ -85,7 +85,7 @@ describe("AlunoTurmaService", () => {
         it("deve lançar 409 quando o aluno já estiver vinculado à turma", async () => {
             userMock.findUnique.mockResolvedValue(userStub);
             turmaMock.findUnique.mockResolvedValue(turmaStub);
-            alunoTurmaMock.findFirst.mockResolvedValue(vinculoStub);
+            alunoTurmaMock.findUnique.mockResolvedValue(vinculoStub);
 
             await expect(
                 AlunoTurmaService.create({ user_id: "user-1", turma_id: "turma-1" })

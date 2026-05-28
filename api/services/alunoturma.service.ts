@@ -15,8 +15,8 @@ export class AlunoTurmaService {
         const turma = await prisma.turma.findUnique({ where: { id: turma_id } });
         if (!turma) throw new HttpError("Turma não encontrada", 404);
 
-        const existente = await prisma.alunoTurma.findFirst({
-            where: { user_id, turma_id },
+        const existente = await prisma.alunoTurma.findUnique({
+            where: { user_id_turma_id: { user_id, turma_id } },
         });
         if (existente) {
             throw new HttpError("Aluno já vinculado a essa turma", 409);

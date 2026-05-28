@@ -43,7 +43,7 @@ const relatorioStub = {
     references: "",
     grade: 0,
     feedback: "",
-    submited_at: new Date("2026-01-01"),
+    submittedAt: new Date("2026-01-01"),
 } as any;
 
 const listaStub = {
@@ -135,10 +135,11 @@ describe("RelatorioService (kebab)", () => {
     });
 
     describe("updateObjective", () => {
-        it("deve atualizar somente o campo objective", async () => {
+        it("deve atualizar somente o campo objective (dono)", async () => {
+            relMock.findUnique.mockResolvedValue(relatorioStub);
             relMock.update.mockResolvedValue({ ...relatorioStub, objective: "novo" });
 
-            const result = await RelatorioService.updateObjective("rel-1", "novo");
+            const result = await RelatorioService.updateObjective("rel-1", "user-1", "novo");
 
             expect(relMock.update).toHaveBeenCalledWith({
                 where: { id: "rel-1" },
@@ -146,17 +147,26 @@ describe("RelatorioService (kebab)", () => {
             });
             expect(result.objective).toBe("novo");
         });
+
+        it("deve lançar 403 quando o usuário não é dono", async () => {
+            relMock.findUnique.mockResolvedValue(relatorioStub);
+
+            await expect(
+                RelatorioService.updateObjective("rel-1", "outro", "x")
+            ).rejects.toMatchObject({ status: 403 });
+            expect(relMock.update).not.toHaveBeenCalled();
+        });
     });
 
     describe("updateSection", () => {
-        it("deve atualizar uma seção válida em relatório em rascunho", async () => {
+        it("deve atualizar uma seção válida em relatório em rascunho (dono)", async () => {
             relMock.findUnique.mockResolvedValue(relatorioStub);
             relMock.update.mockResolvedValue({
                 ...relatorioStub,
                 introduction: "texto",
             });
 
-            await RelatorioService.updateSection("rel-1", "introduction", "texto");
+            await RelatorioService.updateSection("rel-1", "user-1", "introduction", "texto");
 
             expect(relMock.update).toHaveBeenCalledWith({
                 where: { id: "rel-1" },
@@ -166,19 +176,19 @@ describe("RelatorioService (kebab)", () => {
 
         it("deve lançar 400 quando id vazio", async () => {
             await expect(
-                RelatorioService.updateSection("", "introduction" as any, "x")
+                RelatorioService.updateSection("", "user-1", "introduction" as any, "x")
             ).rejects.toMatchObject({ status: 400 });
         });
 
         it("deve lançar 400 quando seção inválida", async () => {
             await expect(
-                RelatorioService.updateSection("rel-1", "inexistente" as any, "x")
+                RelatorioService.updateSection("rel-1", "user-1", "inexistente" as any, "x")
             ).rejects.toMatchObject({ status: 400 });
         });
 
         it("deve lançar 400 quando valor não for string", async () => {
             await expect(
-                RelatorioService.updateSection("rel-1", "introduction" as any, 42 as any)
+                RelatorioService.updateSection("rel-1", "user-1", "introduction" as any, 42 as any)
             ).rejects.toMatchObject({ status: 400 });
         });
 
@@ -186,26 +196,35 @@ describe("RelatorioService (kebab)", () => {
             relMock.findUnique.mockResolvedValue(null);
 
             await expect(
-                RelatorioService.updateSection("nope", "introduction" as any, "x")
+                RelatorioService.updateSection("nope", "user-1", "introduction" as any, "x")
             ).rejects.toMatchObject({ status: 404 });
+        });
+
+        it("deve lançar 403 quando o usuário não é dono", async () => {
+            relMock.findUnique.mockResolvedValue(relatorioStub);
+
+            await expect(
+                RelatorioService.updateSection("rel-1", "outro", "introduction" as any, "x")
+            ).rejects.toMatchObject({ status: 403 });
+            expect(relMock.update).not.toHaveBeenCalled();
         });
 
         it("deve lançar 400 quando relatório já submetido", async () => {
             relMock.findUnique.mockResolvedValue({ ...relatorioStub, status: "SUBMETIDO" });
 
             await expect(
-                RelatorioService.updateSection("rel-1", "introduction" as any, "x")
+                RelatorioService.updateSection("rel-1", "user-1", "introduction" as any, "x")
             ).rejects.toMatchObject({ status: 400 });
             expect(relMock.update).not.toHaveBeenCalled();
         });
     });
 
     describe("update", () => {
-        it("deve atualizar apenas seções válidas enviadas", async () => {
+        it("deve atualizar apenas seções válidas enviadas (dono)", async () => {
             relMock.findUnique.mockResolvedValue(relatorioStub);
             relMock.update.mockResolvedValue(relatorioStub);
 
-            await RelatorioService.update("rel-1", {
+            await RelatorioService.update("rel-1", "user-1", {
                 introduction: "a",
                 development: "b",
                 campo_ignorado: "c",
@@ -221,7 +240,7 @@ describe("RelatorioService (kebab)", () => {
             relMock.findUnique.mockResolvedValue(relatorioStub);
 
             await expect(
-                RelatorioService.update("rel-1", { campo: "x" })
+                RelatorioService.update("rel-1", "user-1", { campo: "x" })
             ).rejects.toMatchObject({ status: 400 });
         });
 
@@ -229,34 +248,42 @@ describe("RelatorioService (kebab)", () => {
             relMock.findUnique.mockResolvedValue(null);
 
             await expect(
-                RelatorioService.update("nope", { introduction: "a" })
+                RelatorioService.update("nope", "user-1", { introduction: "a" })
             ).rejects.toMatchObject({ status: 404 });
+        });
+
+        it("deve lançar 403 quando o usuário não é dono", async () => {
+            relMock.findUnique.mockResolvedValue(relatorioStub);
+
+            await expect(
+                RelatorioService.update("rel-1", "outro", { introduction: "a" })
+            ).rejects.toMatchObject({ status: 403 });
         });
 
         it("deve lançar 400 quando relatório já submetido", async () => {
             relMock.findUnique.mockResolvedValue({ ...relatorioStub, status: "CORRIGIDO" });
 
             await expect(
-                RelatorioService.update("rel-1", { introduction: "a" })
+                RelatorioService.update("rel-1", "user-1", { introduction: "a" })
             ).rejects.toMatchObject({ status: 400 });
         });
 
         it("deve lançar 400 quando id vazio", async () => {
             await expect(
-                RelatorioService.update("", { introduction: "a" })
+                RelatorioService.update("", "user-1", { introduction: "a" })
             ).rejects.toMatchObject({ status: 400 });
         });
     });
 
     describe("submit", () => {
-        it("deve submeter relatório em rascunho", async () => {
+        it("deve submeter relatório em rascunho (dono)", async () => {
             relMock.findUnique.mockResolvedValue(relatorioStub);
             relMock.update.mockResolvedValue({
                 ...relatorioStub,
                 status: "SUBMETIDO",
             });
 
-            const result = await RelatorioService.submit("rel-1");
+            const result = await RelatorioService.submit("rel-1", "user-1");
 
             expect(relMock.update).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -270,21 +297,29 @@ describe("RelatorioService (kebab)", () => {
         it("deve lançar 404 quando relatório não existe", async () => {
             relMock.findUnique.mockResolvedValue(null);
 
-            await expect(RelatorioService.submit("nope")).rejects.toMatchObject({
+            await expect(RelatorioService.submit("nope", "user-1")).rejects.toMatchObject({
                 status: 404,
+            });
+        });
+
+        it("deve lançar 403 quando o usuário não é dono", async () => {
+            relMock.findUnique.mockResolvedValue(relatorioStub);
+
+            await expect(RelatorioService.submit("rel-1", "outro")).rejects.toMatchObject({
+                status: 403,
             });
         });
 
         it("deve lançar 400 quando relatório já submetido", async () => {
             relMock.findUnique.mockResolvedValue({ ...relatorioStub, status: "SUBMETIDO" });
 
-            await expect(RelatorioService.submit("rel-1")).rejects.toMatchObject({
+            await expect(RelatorioService.submit("rel-1", "user-1")).rejects.toMatchObject({
                 status: 400,
             });
         });
 
         it("deve lançar 400 quando id vazio", async () => {
-            await expect(RelatorioService.submit("")).rejects.toMatchObject({
+            await expect(RelatorioService.submit("", "user-1")).rejects.toMatchObject({
                 status: 400,
             });
         });

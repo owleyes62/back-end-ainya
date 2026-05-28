@@ -17,7 +17,7 @@ model Relatorio {
     feedback String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    submited_at DateTime
+    submittedAt DateTime
 }
 
     
