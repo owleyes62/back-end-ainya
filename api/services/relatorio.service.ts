@@ -68,7 +68,7 @@ export class RelatorioService {
                 references: '',
                 grade: 0.0,
                 feedback: '',
-                submited_at: new Date(),
+                submittedAt: new Date(),
             },
         });
     }
@@ -92,15 +92,19 @@ export class RelatorioService {
         return relatorio;
     }
 
-    // Atividade 2 - Atualizar apenas o texto do objetivo (Salvamento Automático)
-    static async updateObjective(id: string, novoObjetivo: string) {
-        return await prisma.relatorio.update({
-            where: { id: id },
-            data: { objective: novoObjetivo }
+    // Atualiza apenas o texto do objetivo (salvamento automático) — só o dono pode.
+    static async updateObjective(id: string, userId: string, novoObjetivo: string) {
+        const relatorio = await this.assertOwnership(id, userId);
+        if (relatorio.status === "SUBMETIDO" || relatorio.status === "CORRIGIDO") {
+            throw new HttpError("Não é possível editar um relatório já submetido", 400);
+        }
+        return prisma.relatorio.update({
+            where: { id },
+            data: { objective: novoObjetivo },
         });
     }
 
-    static async updateSection(id: string, secao: Secao, valor: string) {
+    static async updateSection(id: string, userId: string, secao: Secao, valor: string) {
         if (!id) throw new HttpError("id é obrigatório", 400);
         if (!SECOES_VALIDAS.includes(secao)) {
             throw new HttpError(`Seção inválida. Use: ${SECOES_VALIDAS.join(", ")}`, 400);
@@ -109,8 +113,7 @@ export class RelatorioService {
             throw new HttpError("O valor da seção deve ser texto", 400);
         }
 
-        const relatorio = await prisma.relatorio.findUnique({ where: { id } });
-        if (!relatorio) throw new HttpError("Relatório não encontrado", 404);
+        const relatorio = await this.assertOwnership(id, userId);
         if (relatorio.status === "SUBMETIDO" || relatorio.status === "CORRIGIDO") {
             throw new HttpError("Não é possível editar um relatório já submetido", 400);
         }
@@ -121,11 +124,10 @@ export class RelatorioService {
         });
     }
 
-    static async update(id: string, body: any) {
+    static async update(id: string, userId: string, body: any) {
         if (!id) throw new HttpError("id é obrigatório", 400);
 
-        const relatorio = await prisma.relatorio.findUnique({ where: { id } });
-        if (!relatorio) throw new HttpError("Relatório não encontrado", 404);
+        const relatorio = await this.assertOwnership(id, userId);
         if (relatorio.status === "SUBMETIDO" || relatorio.status === "CORRIGIDO") {
             throw new HttpError("Não é possível editar um relatório já submetido", 400);
         }
@@ -147,11 +149,10 @@ export class RelatorioService {
         });
     }
 
-    static async submit(id: string) {
+    static async submit(id: string, userId: string) {
         if (!id) throw new HttpError("id é obrigatório", 400);
 
-        const relatorio = await prisma.relatorio.findUnique({ where: { id } });
-        if (!relatorio) throw new HttpError("Relatório não encontrado", 404);
+        const relatorio = await this.assertOwnership(id, userId);
         if (relatorio.status === "SUBMETIDO" || relatorio.status === "CORRIGIDO") {
             throw new HttpError("Relatório já foi submetido", 400);
         }
@@ -160,8 +161,19 @@ export class RelatorioService {
             where: { id },
             data: {
                 status: "SUBMETIDO",
-                submited_at: new Date(),
+                submittedAt: new Date(),
             },
         });
+    }
+
+    // Carrega o relatório e garante que pertence ao usuário autenticado.
+    // 403 se não for dono, 404 se não existir.
+    private static async assertOwnership(id: string, userId: string) {
+        const relatorio = await prisma.relatorio.findUnique({ where: { id } });
+        if (!relatorio) throw new HttpError("Relatório não encontrado", 404);
+        if (relatorio.user_id !== userId) {
+            throw new HttpError("Você só pode alterar os próprios relatórios", 403);
+        }
+        return relatorio;
     }
 }

@@ -5,7 +5,11 @@ import { UserCanteiroService } from "../services/usercanteiro.service.js";
 export class UserCanteiroController {
     static async create(req: Request, res: Response) {
         try {
-            const vinculo = await UserCanteiroService.create(req.body);
+            // user_id sempre vem do JWT (requireAuth) — body não controla mais.
+            const vinculo = await UserCanteiroService.create({
+                ...req.body,
+                user_id: req.user!.id,
+            });
             return res.status(201).json(vinculo);
         } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });
@@ -34,7 +38,11 @@ export class UserCanteiroController {
 
     static async delete(req: Request, res: Response) {
         try {
-            await UserCanteiroService.delete(req.body);
+            // Usuário só pode remover o próprio vínculo.
+            await UserCanteiroService.delete({
+                ...req.body,
+                user_id: req.user!.id,
+            });
             return res.status(200).json({ message: "Vínculo removido com sucesso" });
         } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });

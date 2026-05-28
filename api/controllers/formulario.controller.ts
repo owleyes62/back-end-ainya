@@ -60,7 +60,11 @@ export class FormularioController {
 
     static async create(req: Request, res: Response) {
         try {
-            const formulario = await FormularioService.create(req.body);
+            // user_id sempre vem do JWT (requireAuth) — body não controla mais.
+            const formulario = await FormularioService.create({
+                ...req.body,
+                user_id: req.user!.id,
+            });
 
             return res.status(201).json({
                 data: formulario,

@@ -5,7 +5,11 @@ import { ListaDeFormulariosService } from "../services/listadeformularios.servic
 export class ListaDeFormulariosController {
     static async create(req: Request, res: Response) {
         try {
-            const lista = await ListaDeFormulariosService.create(req.body);
+            // created_by sempre vem do JWT (requireAuth) — body não controla mais.
+            const lista = await ListaDeFormulariosService.create({
+                ...req.body,
+                created_by: req.user!.id,
+            });
             return res.status(201).json(lista);
         } catch (err: HttpError | any) {
             return res.status(err.status || 500).json({ error: err.message });

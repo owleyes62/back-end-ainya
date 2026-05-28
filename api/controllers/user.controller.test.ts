@@ -134,13 +134,14 @@ describe("UserController", () => {
     // updateProfile
     // ──────────────────────────────────────────────
     describe("updateProfile", () => {
-        it("deve retornar 200 com o usuário atualizado", async () => {
+        it("deve retornar 200 com o usuário atualizado quando dono é o autenticado", async () => {
             const atualizado = { id: "user-1", name: "Novo Nome" } as any;
             serviceMock.updateProfile.mockResolvedValue(atualizado);
 
             const req = {
                 params: { id: "user-1" },
                 body: { name: "Novo Nome" },
+                user: { id: "user-1" },
             } as unknown as Request;
             const res = mockRes();
 
@@ -151,6 +152,20 @@ describe("UserController", () => {
             expect(res.json).toHaveBeenCalledWith(atualizado);
         });
 
+        it("deve retornar 403 quando usuário autenticado tenta editar outro perfil", async () => {
+            const req = {
+                params: { id: "user-1" },
+                body: { name: "Novo Nome" },
+                user: { id: "outro" },
+            } as unknown as Request;
+            const res = mockRes();
+
+            await UserController.updateProfile(req, res);
+
+            expect(serviceMock.updateProfile).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(403);
+        });
+
         it("deve retornar 400 quando o service rejeita por validação", async () => {
             serviceMock.updateProfile.mockRejectedValue(
                 new HttpError("name deve ter pelo menos 2 caracteres", 400)
@@ -159,6 +174,7 @@ describe("UserController", () => {
             const req = {
                 params: { id: "user-1" },
                 body: { name: "A" },
+                user: { id: "user-1" },
             } as unknown as Request;
             const res = mockRes();
 
