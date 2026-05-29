@@ -34,8 +34,10 @@ routes.get("/health", (_req, res) => {
 // /users tem rotas públicas (login, cadastro) e protegidas — controle interno
 routes.use("/users", userRouter);
 
+// /institutions tem GET público (consumido pela tela de cadastro) e POST protegido
+routes.use("/institutions", institutionRouter);
+
 // Demais routers exigem Bearer accessToken
-routes.use("/institutions", requireAuth, institutionRouter);
 routes.use("/formularios", requireAuth, formularioRouter);
 routes.use("/canteiros", requireAuth, canteiroRouter);
 routes.use("/plantas-forrageiras", requireAuth, plantaforrageiraRouter);

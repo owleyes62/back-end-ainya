@@ -2,7 +2,8 @@ export const institutionPaths = {
     "/institutions": {
         get: {
             tags: ["Institutions"],
-            summary: "Listar instituições",
+            summary: "Listar instituições (público, usado na tela de cadastro)",
+            security: [],
             responses: { "200": { description: "Lista" } },
         },
         post: {
